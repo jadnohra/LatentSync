@@ -62,7 +62,11 @@ class Upsample3D(nn.Module):
         # if `output_size` is passed we force the interpolation output
         # size and do not make use of `scale_factor=2`
         if output_size is None:
-            hidden_states = F.interpolate(hidden_states, scale_factor=[1.0, 2.0, 2.0], mode="nearest")
+            _orig_dtype = hidden_states.dtype
+            hidden_states = F.interpolate(
+                hidden_states.to(torch.float32),
+                scale_factor=[1.0, 2.0, 2.0], mode="nearest"
+            ).to(_orig_dtype)
         else:
             hidden_states = F.interpolate(hidden_states, size=output_size, mode="nearest")
 

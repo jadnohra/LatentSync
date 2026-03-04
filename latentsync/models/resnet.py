@@ -68,7 +68,11 @@ class Upsample3D(nn.Module):
                 scale_factor=[1.0, 2.0, 2.0], mode="nearest"
             ).to(_orig_dtype)
         else:
-            hidden_states = F.interpolate(hidden_states, size=output_size, mode="nearest")
+            _orig_dtype = hidden_states.dtype
+            hidden_states = F.interpolate(
+                hidden_states.to(torch.float32),
+                size=output_size, mode="nearest"
+            ).to(_orig_dtype)
 
         # If the input is bfloat16, we cast back to bfloat16
         if dtype == torch.bfloat16:
